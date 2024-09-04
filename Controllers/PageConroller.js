@@ -1,6 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-const express = require('express');
 const Content = require('../models/ContentModel');
 const Section = require('../models/SectionModel');
 const Page = require('../models/PageModel');
@@ -22,11 +19,17 @@ exports.getPage = async (req, res) => {
       }
 
       const imageFieldMapping = {
-            'homeAbout': 'homeAboutImage',
-            'homeServices': 'homeServicesImage',
-            'homeBrief': 'homeBriefImage',
-            'aboutGoals':'AboutGoalsImage',
-            'aboutIntroduction':'AboutIntroductionImage',
+        'homeHeader':'homeHeaderImage',
+        'homeAbout': 'homeAboutImage',
+        'homeServices': 'homeServicesImage',
+        'homeBrief': 'homeBriefImage',
+        'aboutHeader':'AboutHeaderImage',
+        'aboutGoals':'AboutGoalsImage',
+        'aboutIntroduction':'AboutIntroductionImage',
+        'showCasesIntroduction':'ShowCasesIntroductionImage',
+        'showCasesHeader':'ShowCasesHeaderImage',
+        'contactHeader':'contactHeaderImage',
+        'ContactIntroduction':'ContactIntroductionImage' 
       };
 
       for (let section of page.Sections) {
@@ -36,14 +39,20 @@ exports.getPage = async (req, res) => {
 
               if (imageFieldName && content.data[imageFieldName]) {
                     
-                  const imageBuffer = content.data[imageFieldName].buffer;
-                  const imageContentType = content.data[imageFieldName].contentType;
-
-                  content.data[imageFieldName] = {
-                      image: `data:${imageContentType};base64,${imageBuffer.toString('base64')}`
-                  };
+                  const Buffer = content.data[imageFieldName].buffer;
+                  const ContentType = content.data[imageFieldName].contentType;
+                
+                  if (ContentType.startsWith('image/')) {
+                    content.data[imageFieldName] = {
+                        image: `data:${ContentType};base64,${Buffer.toString('base64')}`
+                    };
+                } else if (ContentType.startsWith('video/')) {
+                    content.data[imageFieldName] = {
+                        video: `data:${ContentType};base64,${Buffer.toString('base64')}`
+                    };
+                }
               }
-              if (content.title === 'homeBlogs') {
+              if (content.title === 'homeBlogs') {   
                   content.data.homeBlogs = content.data.homeBlogs.map(blog => {
                       if (blog.homeBlogImage) {
                           const blogImageBuffer = blog.homeBlogImage.buffer;
@@ -56,6 +65,19 @@ exports.getPage = async (req, res) => {
                       return blog;
                   });
               }
+              else if (content.title === 'showCasesSections') {
+                content.data.ShowcasesSections = content.data.ShowcasesSections.map(Sec => {
+                    if (Sec.sectionImage) {
+                        const ShowcasesBuffer = Sec.sectionImage.buffer;
+                        const ShowcasesContentType = Sec.sectionImage.contentType;
+
+                        Sec.sectionImage = {
+                            image: `data:${ShowcasesContentType};base64,${ShowcasesBuffer.toString('base64')}`
+                        };
+                    }
+                    return Sec;
+                });
+            }
           }
       }
 
@@ -66,10 +88,7 @@ exports.getPage = async (req, res) => {
   }
 };
 
-
-
 // Update page
-
 exports.updatePage = async (req, res) => {
   let { requestData } = req.body;
   const { pageName } = req.params;
@@ -114,19 +133,19 @@ exports.updatePage = async (req, res) => {
                   };
                 }
               });
-            }else if(contentData.title == 'showCasesSections'){
-              let ShowcasesSections = contentData.data.ShowcasesSections;
-              ShowcasesSections.forEach((section, index) => {
-                const sectionImage = 'sectionImage_' + index;
-                const matchingImageFile = req.files.find(file => file.fieldname === sectionImage);
+            }else if (contentData.title == 'showCasesSections') {
+                let ShowcasesSections = contentData.data.ShowcasesSections;
+                ShowcasesSections.forEach((section, index) => {
+                    const sectionImage = 'sectionImage_' + index;
+                    const matchingImageFile = req.files.find(file => file.fieldname === sectionImage);
 
-                if (matchingImageFile) {
-                  section.sectionImage = {
-                    buffer: matchingImageFile.buffer,
-                    contentType: matchingImageFile.mimetype
-                  };
-                }
-              });
+                    if (matchingImageFile) {
+                        section.sectionImage = {
+                            buffer: matchingImageFile.buffer,
+                            contentType: matchingImageFile.mimetype
+                        };
+                    }
+                });
            }else {
               const imageFieldMapping = {
                 'homeHeader':'homeHeaderImage',
@@ -172,7 +191,7 @@ exports.updatePage = async (req, res) => {
 
     await page.save();
     res.json(page);
-    res.status(2001).send('Data send successfully');
+    res.status(201).send('Data send successfully');
   } catch (err) {
     console.error(err.message);
     if (!res.headersSent) { 

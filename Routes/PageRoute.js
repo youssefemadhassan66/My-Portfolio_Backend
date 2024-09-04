@@ -1,8 +1,7 @@
-const path = require('path');
 const express = require('express');
-const app = express();
 const router = express.Router();
-const { updatePage, getPage } = require('../Controllers/PageConroller');
+const { updatePage, getPage} = require('../Controllers/PageConroller');
+const{PostMails } =require('../Controllers/MailController');
 const authMiddleware = require('../Middlewares/authMiddleware');
 const uploadHandler = require('../Middlewares/MulterConfig');
 
@@ -15,6 +14,7 @@ router.get('/dashboard/:pageName',authMiddleware,(req,res)=>{
 
 router.get('/:pageName', getPage);
 
+router.post('/:pageName', PostMails);
 
 module.exports = router;
     

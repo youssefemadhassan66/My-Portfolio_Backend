@@ -12,11 +12,9 @@ exports.createUser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: "Username already exists" });
         }
-
   
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        
         const user = await User.create({ username, password: hashedPassword });
         res.status(201).json(user);
     } catch (err) {

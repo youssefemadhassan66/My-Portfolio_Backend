@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const port = 3000;
@@ -24,20 +22,7 @@ DBconnection();
 app.use('/user',UserRoute);
 app.use('/login',LoginRoute);
 app.use('/',PageRoute);
-app.use('/home', (req, res, next) => {
-    const pageName = req.params.pageName;
-    express.static(path.join(__dirname, `Controllers/uploads/home`))(req, res, next);
-});
 
-app.use('/uploads/home', (req, res, next) => {
-    const pageName = req.params.pageName;
-    express.static(path.join(__dirname, `Controllers/uploads/home`))(req, res, next);
-});
-
-app.use('/:pageName', (req, res, next) => {
-    const pageName = req.params.pageName;
-    express.static(path.join(__dirname, `Controllers/uploads/${pageName}`))(req, res, next);
-});
 app.listen(port,()=>{
-    console.log(`server is running on port ${port}`);
+    console.log(`server is running on port ` + process.env.PORT);
 })
