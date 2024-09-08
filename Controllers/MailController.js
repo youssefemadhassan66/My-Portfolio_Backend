@@ -19,9 +19,7 @@ const Mail =  require('../models/MailsModel');
 
 // }
 exports.PostMails = async (req, res) => {
-    const { name, email, subject, message } = req.body;
-    console.log(req.body);
-  
+    const { name, email, subject, message } = req.body;  
     try {
       const mail = await Mail.create({ name, email, subject, message });
       res.status(201).json(mail);

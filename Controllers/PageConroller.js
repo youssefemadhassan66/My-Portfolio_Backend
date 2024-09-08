@@ -80,7 +80,6 @@ exports.getPage = async (req, res) => {
             }
           }
       }
-
       res.json(page.Sections);
   } catch (err) {
       console.error(err.message);

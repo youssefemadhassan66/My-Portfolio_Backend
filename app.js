@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use(cors({
-    origin:'http://localhost:4200',
+    origin:'https://my-portofolio-fornt-end.vercel.app',
     methods: ['GET','POST','DELETE'],
     credentials :true
 }));
