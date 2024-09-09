@@ -2,6 +2,7 @@
   "name": "final_project_back_end",
   "version": "1.0.0",
   "main": "app.js",
+  "engines": {},
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
