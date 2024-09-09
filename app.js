@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const port = 3000;
+const port = process.env.PORT || 3000;
 const app = express();
 const DBconnection = require('./Config/DBconfig');
 const PageRoute =  require('./Routes/PageRoute');
@@ -23,6 +23,6 @@ app.use('/user',UserRoute);
 app.use('/login',LoginRoute);
 app.use('/',PageRoute);
 
-app.listen(port,()=>{
-    console.log(`server is running on port ` + process.env.PORT);
+app.listen(port, "0.0.0.0",()=>{
+    console.log(`server is running on port ` + port);
 })
